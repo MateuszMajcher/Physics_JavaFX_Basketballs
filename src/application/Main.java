@@ -1,8 +1,10 @@
 package application;
 
+import java.text.DecimalFormat;
+
 import com.sun.javafx.geom.Vec2d;
 
-import javafx.animation.AnimationTimer;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -10,7 +12,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -20,14 +21,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+@SuppressWarnings("restriction")
 public class Main extends Application {
 
 	private Canvas canvas = new Canvas(600, 400);
@@ -61,40 +61,45 @@ public class Main extends Application {
 			buttons.getChildren().addAll(startBtn, resetBtn);
 
 			// slider
-			Label speedText = new Label("Speed");
-			Label angleText = new Label("Angle");
+			Label speedText = new Label("Speed ");
+			Label angleText = new Label("Angle ");
+			Label speedValue = new Label("0.0");
+			Label angleValue= new Label("0.0");
 			final Slider speedSlider = new Slider();
 			final Slider angleSlider = new Slider(0, 90, 1);
 			angleSlider.setShowTickMarks(true);
-			angleSlider.setShowTickLabels(true);
-			angleSlider.setMajorTickUnit(1f);
+			angleSlider.setShowTickLabels(false);
+			angleSlider.setMajorTickUnit(10f);
 			angleSlider.setBlockIncrement(1f);
 			angleSlider.setMaxWidth(Double.MAX_VALUE);
+			angleSlider.setPrefWidth(250);
 
 			// Listener
-			speedSlider.valueProperty().addListener(new ChangeListener() {
+			speedSlider.valueProperty().addListener(new ChangeListener<Number>() {
 				@Override
-				public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-					speedText.textProperty().setValue(String.valueOf((int) speedSlider.getValue()));
-					speed = speedSlider.getValue();
+				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+					speedValue.textProperty().setValue(new DecimalFormat("#0.00").format(arg2.doubleValue()));
+					speed = arg2.doubleValue();
 				}
 			});
+			
+			angleSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
-			angleSlider.valueProperty().addListener(new ChangeListener() {
 				@Override
-				public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-					angleText.textProperty().setValue(String.valueOf((double) angleSlider.getValue()));
+				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+					angleValue.textProperty().setValue(new DecimalFormat("#0.00").format(newValue.doubleValue()));
 					angle = angleSlider.getValue();
+					
 				}
 			});
 
 			GraphicsContext gc = canvas.getGraphicsContext2D();
 			Sprite sp = new Sprite(new Vec2d(radius / 2, canvas.getHeight() - 20), 0.1, radius);
 
-			System.out.println(frameRate);
+			
 			Timeline timeline = new Timeline(new KeyFrame(Duration.millis(frameDelay), ae -> {
 
-				// Clear the canvas
+				// Clear
 				gc.setFill(new Color(0.85, 0.85, 1.0, 1.0));
 				gc.fillRect(0, 0, 600, 400);
 
@@ -128,7 +133,7 @@ public class Main extends Application {
 
 				sp.update(frameRate);
 
-				// Handle collisions
+				// Sciana
 				if (sp.getPosition().y > canvas.getHeight() - radius) {
 					sp.getVelocity().y *= sp.getRestitution();
 					sp.getPosition().y = canvas.getHeight() - radius;
@@ -142,11 +147,7 @@ public class Main extends Application {
 					sp.getPosition().x = radius;
 				}
 
-				/*
-				 * if (Collision.collisionCirlceRect(sp, rect[0])) {
-				 * System.out.println("colision"); sp.setColor(Color.AQUA); }
-				 * else {sp.setColor(Color.BEIGE);}
-				 */
+				
 
 				sp.render(gc);
 
@@ -166,8 +167,8 @@ public class Main extends Application {
 
 				@Override
 				public void handle(ActionEvent arg0) {
-					System.out.println(speed);
-					System.out.println(angle);
+					
+					/*obliczenie kata*/
 					sp.getVelocity().x = Math.cos(angle * Math.PI / 180.0) * speed;
 					sp.getVelocity().y = Math.sin(angle * Math.PI / 180.0) * speed;
 
@@ -178,6 +179,7 @@ public class Main extends Application {
 
 				@Override
 				public void handle(ActionEvent arg0) {
+			
 					Vec2d p = new Vec2d(radius / 2, canvas.getHeight());
 					sp.setPosition(p);
 					sp.getVelocity().x = 0;
@@ -189,7 +191,7 @@ public class Main extends Application {
 			VBox v = new VBox();
 			v.setPadding(new Insets(0, 100, 0, 10));
 			v.setSpacing(0);
-			v.getChildren().addAll(speedText, speedSlider, angleText, angleSlider);
+			v.getChildren().addAll(new HBox(speedText, speedValue), speedSlider, new HBox(angleText, angleValue), angleSlider);
 
 			HBox h = new HBox();
 			h.getChildren().addAll(buttons, v);

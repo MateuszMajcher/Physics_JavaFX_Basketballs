@@ -2,36 +2,16 @@ package application;
 
 import com.sun.javafx.geom.Vec2d;
 
-import javafx.scene.shape.Circle;
+
 import javafx.scene.shape.Rectangle;
 
+@SuppressWarnings("restriction")
 public class Collision {
 	
 
-	@SuppressWarnings("restriction")
-	static boolean collisionCirlceRect(Sprite c, Rectangle r) {
-		@SuppressWarnings("restriction")
-		Vec2d half = new Vec2d(r.getWidth()/2, r.getHeight());
-		Vec2d center = new Vec2d(c.getPosition().x - (r.getX()+half.x)
-							    ,c.getPosition().y - (r.getY()+half.y));
-		
-		Vec2d side = new Vec2d(Math.abs (center.x) - half.x
-			    , Math.abs (center.y) - half.y);
-		
-		if (side.x >  c.getRadius() || side.y >  c.getRadius()) // outside
-		    return false; 
-        
-		if (side.x < 0 || side.y < 0) // intersects side or corner
-            return true;
-		
-		
-		return side.x*side.x + side.y*side.y  < c.getRadius()*c.getRadius();
-		
-		
-	}
-	@SuppressWarnings("restriction")
+	
 	public static Bounce bounce(Sprite c, Rectangle r) {
-		@SuppressWarnings("restriction")
+
 		Vec2d half = new Vec2d(r.getWidth()/2, r.getHeight()/2);
 		
 		Vec2d center = new Vec2d(c.getPosition().x - (r.getX()+half.x)
@@ -40,11 +20,11 @@ public class Collision {
 		Vec2d side = new Vec2d(Math.abs (center.x) - half.x
 			    , Math.abs (center.y) - half.y);
 		
-		 if (side.x >  c.getRadius() || side.y >  c.getRadius()) // outside
+		 if (side.x >  c.getRadius() || side.y >  c.getRadius()) 
 			    return new Bounce(false); 
-	        if (side.x < -c.getRadius() && side.y < -c.getRadius()) // inside
+	        if (side.x < -c.getRadius() && side.y < -c.getRadius()) 
 			    return new Bounce(false); 
-			if (side.x < 0 || side.y < 0) // intersects side or corner
+			if (side.x < 0 || side.y < 0) 
 			{
 				double dx = 0, dy = 0;
 			    if (Math.abs (side.x) < c.getRadius() && side.y < 0)
@@ -58,7 +38,7 @@ public class Collision {
 				
 	            return new Bounce(true, dx, dy);
 			}
-	        // circle is near the cornerb
+	        // blisko rogu
 	        boolean bounce = side.x*side.x + side.y*side.y  < c.getRadius()*c.getRadius();
 			if (!bounce) return new Bounce(false);
 			double norm = Math.sqrt (side.x*side.x+side.y*side.y);

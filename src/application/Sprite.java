@@ -1,18 +1,15 @@
 package application;
 
-import java.util.Vector;
 
-import javax.xml.bind.ValidationEvent;
 
 import com.sun.javafx.geom.Vec2d;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
+@SuppressWarnings("restriction")
 public class Sprite{
-	private Image image;
 	private Color color;
 	private Vec2d position;
 	private Vec2d velocity;
